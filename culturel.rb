@@ -174,19 +174,21 @@ File.write("books_part_#{part_number}.json", JSON.pretty_generate(books))
       break unless next_page # Exit the loop if there is no next page
 # Increment page number BEFORE changing the URL
 page_number += 1
-      # Update the URL to the next page
-      url = next_page['href']
-    end
+ next_page = page.at('a.next')
+    break unless next_page
 
-    # Mark this URL as completed
-    File.open("completed_urls.txt", "a") do |f|
-      f.puts url
- page_number += 1 
-    end
-  rescue => e
-    puts "Error processing URL: #{e.message}"
+    # Update URL and increment page number
+    url = next_page['href']
+    page_number += 1
   end
+
+  # Mark original URL (not next_page!) as completed
+  File.open("completed_urls.txt", "a") { |f| f.puts urls_to_process.find { |u| url.include?(u) } }
+
+rescue => e
+  puts "Error processing URL: #{e.message}"
 end
 
+end
 # Print completion message
 puts "Scraping completed. Data exported to books.csv and books.json."
