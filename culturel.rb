@@ -8,15 +8,15 @@ agent = Mechanize.new
 
 
 
-# Get the list file name from command-line args or default to 'list.txt'
+
+
+# Array to hold the scraped data# Get the list file name from command-line args or default to 'list.txt'
 list_file = ARGV[0] || 'list.txt'
 
 # Read URLs from the list file
 #urls = File.readlines(list_file).map(&:strip)
 # Read URLs from urls.txt
-urls = File.readlines('list').map(&:strip)
-
-# Array to hold the scraped data
+urls = File.readlines('list_file').map(&:strip)
 books = []
 
 # Load existing data from JSON if available
