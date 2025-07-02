@@ -140,7 +140,7 @@ summary = summary.nil? || summary.empty? ? 'N/A' : summary
           puts "Year: #{book_data[:year]}"
           puts "Genre: #{book_data[:genre]}"
           puts "Image Link: #{book_data[:image_link]}"
-          puts "pageurl: #{book_data[:url]}"  
+          puts "pageurl: #{book_data[:pageurl]}"  
           puts "-----------------------------"
 
           # Add the book data to the array
