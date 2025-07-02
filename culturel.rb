@@ -16,7 +16,7 @@ list_file = ARGV[0] || 'list.txt'
 # Read URLs from the list file
 #urls = File.readlines(list_file).map(&:strip)
 # Read URLs from urls.txt
-urls = File.readlines('list_file').map(&:strip)
+urls = File.readlines(list_file).map(&:strip)
 books = []
 
 # Load existing data from JSON if available
