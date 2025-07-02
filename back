@@ -42,50 +42,6 @@ if File.exist?("books.csv")
   end
 end
 
-require 'mechanize'
-require 'csv'
-require 'json'
-
-# Initialize a new Mechanize agent
-agent = Mechanize.new
-
-
-
-
-# Get the list file name from command-line args or default to 'list.txt'
-list_file = ARGV[0] || 'list.txt'
-
-# Read URLs from the list file
-#urls = File.readlines(list_file).map(&:strip)
-# Read URLs from urls.txt
-urls = File.readlines('list').map(&:strip)
-
-# Array to hold the scraped data
-books = []
-
-# Load existing data from JSON if available
-if File.exist?("books.json")
-  books = JSON.parse(File.read("books.json"), symbolize_names: true)
-end
-
-# Load completed URLs if available
-completed_urls = if File.exist?("completed_urls.txt")
-                   File.readlines("completed_urls.txt").map(&:strip)
-                 else
-                   []
-                 end
-
-# Filter URLs to process only uncompleted ones
-urls_to_process = urls - completed_urls
-
-# Load existing CSV data if available
-saved_books = {}
-if File.exist?("books.csv")
-  CSV.foreach("books.csv", headers: true) do |row|
-    saved_books["#{row['Title']}-#{row['Author']}"] = true
-  end
-end
-
 # Iterate through each URL
 urls_to_process.each do |url|
 #page_number = 1
