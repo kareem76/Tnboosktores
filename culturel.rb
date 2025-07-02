@@ -4,12 +4,9 @@ require 'json'
 
 # Initialize a new Mechanize agent
 agent = Mechanize.new
-require 'mechanize'
-require 'csv'
-require 'json'
 
-# Initialize a new Mechanize agent
-agent = Mechanize.new
+
+
 
 # Get the list file name from command-line args or default to 'list.txt'
 list_file = ARGV[0] || 'list.txt'
@@ -47,7 +44,7 @@ end
 
 # Iterate through each URL
 urls_to_process.each do |url|
-page_number = 1
+#page_number = 1
   begin
     loop do
       # Fetch the page
@@ -128,7 +125,7 @@ summary = summary.nil? || summary.empty? ? 'N/A' : summary
             year: year,
             genre: genre,
             image_link: image_link,
-            page: format('%02d', page_number)
+            pageurl: url
 
           }
 
@@ -143,7 +140,7 @@ summary = summary.nil? || summary.empty? ? 'N/A' : summary
           puts "Year: #{book_data[:year]}"
           puts "Genre: #{book_data[:genre]}"
           puts "Image Link: #{book_data[:image_link]}"
-          puts "page: #{book_data[:page]}"  
+          puts "pageurl: #{book_data[:url]}"  
           puts "-----------------------------"
 
           # Add the book data to the array
@@ -179,7 +176,7 @@ page_number += 1
 
     # Update URL and increment page number
     url = next_page['href']
-    page_number += 1
+    #page_number += 1
   end
 
   # Mark original URL (not next_page!) as completed
