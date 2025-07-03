@@ -3,10 +3,10 @@ name: Parallel Scraper
 on:
   push:
     branches:
-      - main
+      - latrach
   pull_request:
     branches:
-      - main
+      - latrach
 
 jobs:
   scrape:
