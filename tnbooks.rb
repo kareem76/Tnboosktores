@@ -72,6 +72,7 @@ image_url = "#{img_url}#{image_src}" if image_src
     puts "Summary: #{summary}"
     puts "Image URL: #{image_url}" 
     puts "-" * 40 
+sleep(rand(1..2))
 
   rescue OpenURI::HTTPError => e
     puts "Failed to open #{book_url}: #{e.message}"
@@ -90,7 +91,8 @@ CSV.open('books.csv', 'w') do |csv|
 end
 
 # Write the data to a JSON file
-File.write('books.json', JSON.pretty_generate(books)) 
+#File.write('books.json', JSON.pretty_generate(books)) 
 File.write("books_chunk_#{start_id}_#{end_id}.json", JSON.pretty_generate(books))
+
 
 puts "Scraping completed! #{books.size} books saved to books.csv and books.json."
