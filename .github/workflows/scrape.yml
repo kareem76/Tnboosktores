@@ -32,7 +32,8 @@ jobs:
         run: |
           START=$(( ( ${{ matrix.chunk }} - 1 ) * 400 + 1 ))
           END=$(( ${{ matrix.chunk }} * 400 ))
-          ruby tnbooks.rb $START $END
+          ruby tnbooks.rb $START $END ${{ matrix.chunk }}
+
 
       - name: Upload chunk results
         uses: actions/upload-artifact@v4

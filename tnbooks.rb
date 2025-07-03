@@ -92,7 +92,10 @@ end
 
 # Write the data to a JSON file
 #File.write('books.json', JSON.pretty_generate(books)) 
-File.write("books_chunk_#{start_id}_#{end_id}.json", JSON.pretty_generate(books))
+#File.write("books_chunk_#{start_id}_#{end_id}.json", JSON.pretty_generate(books))
+#File.write("books_chunk_#{start_id}_#{end_id}.json", JSON.pretty_generate(books))
+chunk_number = ARGV[2] || 'unknown'
+File.write("books_chunk_#{chunk_number}.json", JSON.pretty_generate(books))
 
 
 puts "Scraping completed! #{books.size} books saved to books.csv and books.json."
