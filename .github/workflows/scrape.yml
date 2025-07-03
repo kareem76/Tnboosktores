@@ -29,7 +29,7 @@ jobs:
           gem install mechanize nokogiri json csv
 
       - name: Run scraper for ${{ matrix.category }}
-        run: ruby scrape.rb "${{ matrix.category }}"
+        run: ruby ceres.rb "${{ matrix.category }}"
 
       - name: Upload JSON result
         uses: actions/upload-artifact@v4
