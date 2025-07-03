@@ -148,7 +148,7 @@ end
       break unless next_page
 
       url = next_page['href']
-    end
+    #end
   rescue => e
     puts "Error processing URL #{url}: #{e.message}"
   end
