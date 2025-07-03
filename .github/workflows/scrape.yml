@@ -3,40 +3,42 @@ name: Parallel Scraper
 on:
   push:
     branches:
-      - main
+      - ceres
   pull_request:
     branches:
-      - main
+      - ceres
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        part: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        category: ["French", "Arabic", "English", "School Books", "Pedagogy"]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: 3.2
 
-      - name: Install Bundler and dependencies
+      - name: Install dependencies
         run: |
-          gem install bundler
-          bundle install || gem install mechanize
+          gem install mechanize nokogiri json csv
 
-      - name: Run scraper on part_${{ matrix.part }}
-        run: |
-          ruby culturel.rb list_part_${{ matrix.part }}.txt ${{ matrix.part }}
+      - name: Run scraper for ${{ matrix.category }}
+        run: ruby scrape.rb "${{ matrix.category }}"
 
-      - name: List files before upload
-        run: ls -la
-
-      - name: Upload JSON results
+      - name: Upload JSON result
         uses: actions/upload-artifact@v4
         with:
-          name: books_part_${{ matrix.part }}
-          path: books_part_${{ matrix.part }}.json
+          name: books-json-${{ matrix.category }}
+          path: output/${{ matrix.category }}.json
+
+      - name: Upload CSV result
+        uses: actions/upload-artifact@v4
+        with:
+          name: books-csv-${{ matrix.category }}
+          path: output/${{ matrix.category }}.csv
