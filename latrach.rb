@@ -11,6 +11,10 @@ part_number = ARGV[1] || '0'
 
 # Read URLs from the list file
 urls = File.readlines(list_file).map(&:strip)
+
+# Array to hold book data for JSON export
+books_data = []
+
 begin
   # Open a CSV file for writing
   CSV.open("books_data.csv", "wb") do |csv|
@@ -134,8 +138,21 @@ rescue => e
   puts "Failed to scrape: #{e.message}"
 
 end
-puts "Scraping completed."
-  
+      # Save progress after processing this page
+      File.open("books.json", "w") do |f|
+        f.write(JSON.pretty_generate(books))
+      end
+
+      # Check for next page link
+      next_page = page.at('a.next')
+      break unless next_page
+
+      url = next_page['href']
+    end
+  rescue => e
+    puts "Error processing URL #{url}: #{e.message}"
+  end
+end
 
 # Write final results at end
 File.write("books_part_#{part_number}.json", JSON.pretty_generate(books))

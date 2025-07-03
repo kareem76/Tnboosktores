@@ -30,7 +30,7 @@ jobs:
 
       - name: Run scraper on part_${{ matrix.part }}
         run: |
-          ruby culturel.rb list_part_${{ matrix.part }}.txt ${{ matrix.part }}
+          ruby latrach.rb list_part_${{ matrix.part }}.txt ${{ matrix.part }}
 
       - name: List files before upload
         run: ls -la
