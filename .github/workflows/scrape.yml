@@ -32,11 +32,20 @@ jobs:
         run: |
           ruby latrach.rb list_part_${{ matrix.part }}.txt ${{ matrix.part }}
 
-      - name: List files before upload
-        run: ls -la
-
       - name: Upload JSON results
-        uses: actions/upload-artifact@v4
-        with:
-          name: books_part_${{ matrix.part }}
-          path: books_part_${{ matrix.part }}.json
+  uses: actions/upload-artifact@v4
+  with:
+    name: books_part_${{ matrix.part }}.json
+    path: books_part_${{ matrix.part }}.json
+
+- name: Upload CSV results
+  uses: actions/upload-artifact@v4
+  with:
+    name: books_part_${{ matrix.part }}.csv
+    path: books_part_${{ matrix.part }}.csv
+
+- name: Upload done.txt
+  uses: actions/upload-artifact@v4
+  with:
+    name: done_part_${{ matrix.part }}
+    path: done_part_${{ matrix.part }}.txt
