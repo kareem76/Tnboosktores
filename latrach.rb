@@ -17,67 +17,69 @@ CSV.open("books_data.csv", "wb") do |csv|
 
   urls.each do |url|
     puts "Processing URL: #{url}"
+ base_url = url.split('?').first
+page_num = 1
 
-    loop do
+loop do
+  paged_url = "#{base_url}?page=#{page_num}"
+  puts "📄 Fetching page #{page_num}: #{paged_url}"
+
+  begin
+    page = agent.get(paged_url)
+    puts "Page title: #{page.title}"
+
+    book_links = page.search('a.product_name.one_line')
+    break if book_links.empty?  # stop if no books found
+
+    book_links.each do |link|
+      book_url = link['href']
+      book_title = link.text.strip
+      puts "🔎 Scraping: #{book_title}"
+
       begin
-        page = agent.get(url)
-        puts "Page title: #{page.title}"
+        details_page = agent.get(book_url)
 
-        book_links = page.search('a.product_name.one_line')
+        subcategory = book_url.split('/')[3].gsub('-', ' ')
+        category = details_page.css('li[itemprop="itemListElement"]').at(1)&.at('span[itemprop="name"]')&.text || 'N/A'
+        author = details_page.at('.product-manufacturer a')&.text&.strip || 'N/A'
+        isbn = details_page.at('.product-reference span[itemprop="sku"]')&.text&.strip || 'N/A'
+        year = details_page.at('dt.name:contains("سنة النشر") + dd.value')&.text&.strip || 'N/A'
+        publisher = details_page.at('dt.name:contains("دار النشر") + dd.value')&.text&.strip || 'N/A'
+        image_url = details_page.at('div.easyzoom a')&.[]('href') || 'N/A'
+        price = details_page.at('.price')&.text&.strip || 'N/A'
+        summary = details_page.at('.product-description')&.text&.strip || 'N/A'
 
-        book_links.each do |link|
-          book_url = link['href']
-          book_title = link.text.strip
-          puts "Scraping: #{book_title}"
+        csv << [book_title, author, year, publisher, isbn, book_url, "#{category} | #{subcategory}", image_url, price, summary]
 
-          begin
-            details_page = agent.get(book_url)
+        books_data << {
+          title: book_title,
+          author: author,
+          year: year,
+          publisher: publisher,
+          isbn: isbn,
+          url: book_url,
+          category: "#{category} | #{subcategory}",
+          image_url: image_url,
+          price: price,
+          summary: summary,
+          pageurl: paged_url
+        }
 
-            subcategory = book_url.split('/')[3].gsub('-', ' ')
-            category = details_page.css('li[itemprop="itemListElement"]').at(1).css('span[itemprop="name"]').text rescue 'N/A'
-            author = details_page.at('.product-manufacturer a')&.text&.strip || 'N/A'
-            isbn = details_page.at('.product-reference span[itemprop="sku"]')&.text&.strip || 'N/A'
-            year = details_page.at('dt.name:contains("سنة النشر") + dd.value')&.text&.strip || 'N/A'
-            publisher = details_page.at('dt.name:contains("دار النشر") + dd.value')&.text&.strip || 'N/A'
-            image_url = details_page.at('div.easyzoom a')&.[]('href') || 'N/A'
-            price = details_page.at('.price')&.text&.strip || 'N/A'
-            summary = details_page.at('.product-description')&.text&.strip || 'N/A'
-
-            csv << [book_title, author, year, publisher, isbn, book_url, "#{category} | #{subcategory}", image_url, price, summary]
-
-            books_data << {
-              title: book_title,
-              author: author,
-              year: year,
-              publisher: publisher,
-              isbn: isbn,
-              url: book_url,
-              category: "#{category} | #{subcategory}",
-              image_url: image_url,
-              price: price,
-              summary: summary,
-              pageurl: url
-            }
-
-            sleep(rand(1..3))
-          rescue => e
-            puts "⚠️ Failed to scrape book at #{book_url}: #{e.message}"
-            next
-          end
-        end
-
-        next_link = page.at('a[rel="next"]') || page.search('a').find { |a| a.text.strip == 'التالي' }
-
-break unless next_link && next_link['href']
-url = page.uri.merge(next_link['href']).to_s
         sleep(rand(1..3))
       rescue => e
-        puts "⚠️ Error processing URL #{url}: #{e.message}"
-        break
+        puts "⚠️ Failed to scrape book at #{book_url}: #{e.message}"
+        next
       end
     end
+
+    page_num += 1
+    sleep(rand(1..3))
+  rescue => e
+    puts "❌ Error on page #{page_num}: #{e.message}"
+    break
   end
 end
+
 
 # Write JSON output once at the end
 File.write("books_part_#{part_number}.json", JSON.pretty_generate(books_data))
