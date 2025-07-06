@@ -66,9 +66,10 @@ CSV.open("books_data.csv", "wb") do |csv|
           end
         end
 
-        next_link = page.at('a.next')
-        break unless next_link
-        url = next_link['href']
+        next_link = page.at('a[rel="next"]') || page.search('a').find { |a| a.text.strip == 'التالي' }
+
+break unless next_link && next_link['href']
+url = page.uri.merge(next_link['href']).to_s
         sleep(rand(1..3))
       rescue => e
         puts "⚠️ Error processing URL #{url}: #{e.message}"
