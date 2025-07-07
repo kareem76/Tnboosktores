@@ -108,7 +108,7 @@ CSV.open(csv_file, "wb") do |csv|
 
   File.open(done_file, 'a') { |f| f.puts url }
 end
-
+end
 File.write(json_file, JSON.pretty_generate(books_data, indent: '  '))
 puts "\n✅ Scraping completed. Exported #{books_data.size} books to:"
 puts "- #{csv_file}"
