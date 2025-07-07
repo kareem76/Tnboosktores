@@ -11,11 +11,12 @@ def safe_get(agent, url, retries = 3)
   rescue => e
     tries += 1
     puts "⚠️ Error fetching #{url}: #{e.message} (try #{tries}/#{retries})"
-    sleep(2 * tries)
+    sleep(5)  # fixed 5 seconds delay before retrying
     retry if tries < retries
     nil
   end
 end
+
 
 # --- Mechanize setup ---
 agent = Mechanize.new
@@ -92,7 +93,7 @@ CSV.open(csv_file, "wb") do |csv|
           pageurl: paged_url
         }
 
-        sleep(rand(2..4))
+        sleep(5)
       rescue => e
         puts "⚠️ Failed to scrape book at #{book_url}: #{e.message}"
         next
@@ -103,7 +104,7 @@ CSV.open(csv_file, "wb") do |csv|
     break unless next_link
 
     page_num += 1
-    sleep(rand(2..4))
+    sleep(5)
   end
 
   File.open(done_file, 'a') { |f| f.puts url }
