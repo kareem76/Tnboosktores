@@ -100,22 +100,18 @@ CSV.open(csv_file, "wb") do |csv|
           next
         end
       end
+next_link = page.at('a.next')
+  break unless next_link
 
-      # Next page
-      next_link = page.at('a.next') || page.search('a').find { |a| a.text.strip == 'التالي' }
-      break unless next_link
-
-      url = page.uri.merge(next_link['href']).to_s rescue break
-      page_num += 1
-      sleep(rand(2..4))
-    end
-
-    # Mark this URL as done
-    File.open(done_file, 'a') { |f| f.puts url }
+   page_num += 1
+    sleep(rand(2..4))
   end
+
+  # ✅ Only mark category as done after finishing ALL its pages
+  File.open(done_file, 'a') { |f| f.puts url }
 end
 
-# --- Write final JSON ---
+# ✅ Write JSON at the very end
 File.write(json_file, JSON.pretty_generate(books_data, indent: '  '))
 
 puts "\n✅ Scraping completed. Exported #{books_data.size} books to:"
